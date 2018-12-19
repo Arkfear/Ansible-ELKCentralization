@@ -1,0 +1,9 @@
+---
+elk:
+  e:
+    address: ["10.1.13.238", "10.1.13.237", "10.1.13.236"]
+    port: 9200
+    master: 10.1.13.238
+  mapping:
+    shard_number: 3
+    replica_number: 1

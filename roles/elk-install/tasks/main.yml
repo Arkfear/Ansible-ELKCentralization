@@ -1,0 +1,51 @@
+---
+- name: set variables
+  set_fact:
+    roles_name: "{{ role_path|basename }}"
+    env: "{{ group_names[0] }}"
+
+- name: check vars file exist
+  local_action: stat path="{{ role_path }}/vars/{{ env }}.yml"
+  register: vars_file
+  become: false
+
+- include_vars: "{{ role_path }}/vars/{{ env }}.yml"
+  when: vars_file.stat.exists == True
+
+- debug:
+    msg: "ELK role:{{ elk_role }}"
+
+- include_tasks: "java_install.yml"
+  when:
+    - '"f" not in elk_role'
+    - ansible_distribution == "CentOS"
+    - ansible_distribution_major_version == '7'
+
+- include_tasks: "add-elk_repo.yml"
+  when:
+    - '"f" not in elk_role'
+    - ansible_distribution == "CentOS"
+    - ansible_distribution_major_version == '7'
+    - java_version is version('18', '>=')
+
+- include_tasks: "install_elasticsearch.yml"
+  when:
+    - '"e" in elk_role'
+    - ansible_distribution == "CentOS"
+    - ansible_distribution_major_version == '7'
+
+- include_tasks: "install_logstash.yml"
+  when:
+    - '"l" in elk_role'
+    - ansible_distribution == "CentOS"
+    - ansible_distribution_major_version == '7'
+
+- include_tasks: "install_kibana.yml"
+  when:
+    - '"k" in elk_role'
+    - ansible_distribution == "CentOS"
+    - ansible_distribution_major_version == '7'
+
+- include_tasks: "install_filebeat.yml"
+  when:
+    - '"f" in elk_role'

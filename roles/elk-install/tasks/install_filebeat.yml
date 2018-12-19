@@ -1,0 +1,25 @@
+---
+- name: Checking if filebeat existence
+  shell: 'rpm -qa | grep filebeat && echo OK || echo Failed'
+  register: filebeat_existence
+
+- name: Get filebeat 6.3.2
+  get_url:
+    dest: /tmp/
+    url: https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-6.3.2-x86_64.rpm
+  when:
+    - filebeat_existence.stdout == "Failed"
+
+- name: RPM install filebeat
+  yum:
+    name: /tmp/filebeat-6.3.2-x86_64.rpm
+    state: present
+  when:
+    - filebeat_existence.stdout == "Failed"
+
+- name: Delete filebeat rpm
+  file:
+    path: /tmp/filebeat-6.3.2-x86_64.rpm
+    state: absent
+  when:
+    - filebeat_existence.stdout == "Failed"

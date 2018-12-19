@@ -1,0 +1,10 @@
+---
+elk_repo_name: "elk-6.x"
+elk_repo_description: "elk repository for 6.x packages"
+elk_repo_baseurl: "https://artifacts.elastic.co/packages/6.x/yum"
+elk_repo_gpgkey: "https://artifacts.elastic.co/GPG-KEY-elasticsearch"
+
+logstash_pluginlist:
+  - "logstash-output-exec"
+  - "logstash-filter-drop"
+  - "logstash-filter-prune"

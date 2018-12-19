@@ -1,0 +1,74 @@
+---
+- name: Setting main filebeat config file.
+  template:
+    src: ../template/main-filebeat.yml.j2
+    dest: /etc/filebeat/filebeat.yml
+    owner: root
+    group: root
+    mode: '0600'
+    backup: no
+
+- name: Setting go project filebeat config file.
+  template:
+    src: ../template/GO-project-filebeat.j2
+    dest: "/etc/filebeat/conf.d/GO-{{ item.item.key }}.yml"
+    owner: root
+    group: root
+    mode: '0600'
+    backup: no
+  with_items: "{{ go_logs.results }}"
+  when:
+    go_logs is defined
+
+- name: Setting java project filebeat config file.
+  template:
+    src: ../template/JAVA-project-filebeat.j2
+    dest: "/etc/filebeat/conf.d/JAVA-{{ item.item.key }}.yml"
+    owner: root
+    group: root
+    mode: '0600'
+    backup: no
+  with_items: "{{ java_logs.results }}"
+  when:
+    java_logs is defined
+
+- name: Setting service project filebeat config file.
+  template:
+    src: ../template/Service-project-filebeat.j2
+    dest: "/etc/filebeat/conf.d/Service-{{ item.item.key }}.yml"
+    owner: root
+    group: root
+    mode: '0600'
+    backup: no
+  with_items: "{{ service_logs.results }}"
+  when:
+    service_logs is defined
+
+# Centos7: Service Setting
+- name: Centos 7 Restarting filebeat and start on boot
+  systemd:
+    name: filebeat
+    state: restarted
+    enabled: yes
+  when:
+    - ansible_distribution == "CentOS"
+    - ansible_distribution_major_version == '7'
+
+# Centos6: Service Setting
+- name: Centos 6 stoping filebeat
+  service:
+    name: filebeat
+    state: restarted
+    enabled: yes
+  when:
+    - ansible_distribution == "CentOS"
+    - ansible_distribution_major_version == '6'
+
+# - name: Centos 6 starting filebeat and start on boot
+#   service:
+#     name: filebeat
+#     state: started
+#     enabled: yes
+#   when:
+#     - ansible_distribution == "CentOS"
+#     - ansible_distribution_major_version == '6'

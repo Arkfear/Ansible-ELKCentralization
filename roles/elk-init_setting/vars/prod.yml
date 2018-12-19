@@ -1,0 +1,15 @@
+---
+elk:
+  e:
+    cluster_name: "kingbay-tech"
+    node_name: "{{ ansible_hostname }}"
+    listen_interface: "{{ ansible_default_ipv4.address }}"
+    port: 9200
+    memory: 16
+
+  l:
+    memory: 4
+  k:
+    port: 5601
+    listen_interface: "{{ ansible_default_ipv4.address }}"
+    name: "kingbay-tech-prod"

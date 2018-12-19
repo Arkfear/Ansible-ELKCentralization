@@ -1,0 +1,15 @@
+output {
+  if "E" in [tags] {
+    elasticsearch {
+      {% if elk.e %}
+      hosts => [
+        {% for esaddress in elk.e.address %}
+        "{{ esaddress }}:{{ elk.e.port }}"{%if not loop.last %},{% endif %}
+        {%endfor%}
+      ]
+      {% endif %}
+      index => "%{type}-%{+YYYY.MM.dd}"
+      template_overwrite => "true"
+    }
+  }
+}

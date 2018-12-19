@@ -1,0 +1,30 @@
+{
+  "index_patterns": ["mongo-service-*"],
+  "settings": {
+    {% if elk.mapping %}
+    "number_of_shards": {{elk.mapping.shard_number}},
+    "number_of_replicas": {{elk.mapping.replica_number}}
+    {% else %}
+    "number_of_shards": 1,
+    "number_of_replicas": 1
+    {% endif %}
+  },
+  "mappings": {
+    "doc": {
+      "properties": {
+        "host": { "type": "ip" },
+        "port": { "type": "integer" },
+        "command": { "type": "text" },
+        "type": { "type": "keyword" },
+        "monitor_items": { "type": "keyword" },
+        "primary": { "type": "keyword" },
+        "slave1": { "type": "ip" },
+        "slave1_delay": { "type": "integer" },
+        "slave1_port": { "type": "integer" },
+        "slave2": { "type": "ip" },
+        "slave2_delay": { "type": "integer" },
+        "slave2_port": { "type": "integer" }
+      }
+    }
+  }
+}

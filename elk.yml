@@ -1,0 +1,17 @@
+---
+- hosts: '{{ hosts_name }}'
+  become: True
+  # user: root
+  become_method: sudo
+  roles:
+    # - role: elk-install
+    # - role: elk-init_setting
+    # - role: filebeat-setting
+    - role: logstash_update_config
+    # - role: install-template
+    # - role: get-log-status
+    # - role: work_delete
+
+# Execute command:
+# ansible-playbook elk.yml -e hosts_name=prod-elk
+# ansible -m ping 10.1.13.236

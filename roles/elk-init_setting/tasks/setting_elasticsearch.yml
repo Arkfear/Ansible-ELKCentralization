@@ -1,0 +1,53 @@
+---
+- name: Setting Elasticsearh JVM Setting.
+  lineinfile:
+    path: /etc/elasticsearch/jvm.options
+    regexp: '^-Xms.*'
+    line: '-Xms{{ elk.e.memory }}g'
+
+- name: Setting Elasticsearh JVM Setting.
+  lineinfile:
+    path: /etc/elasticsearch/jvm.options
+    regexp: '^-Xmx.*'
+    line: '-Xmx{{ elk.e.memory }}g'
+
+- name: Setting Elasticsearch and backup origin config file.
+  template:
+    src: ../template/elasticsearch.yml.j2
+    dest: /etc/elasticsearch/elasticsearch.yml
+    owner: root
+    group: elasticsearch
+    mode: '0660'
+    backup: yes
+
+- name: Set elasticsearch startup on boot
+  systemd:
+    enabled: yes
+    name: elasticsearch
+  when:
+    - ansible_distribution == "CentOS"
+    - ansible_distribution_major_version == '7'
+
+- name: Set elasticsearch startup on boot
+  systemd:
+    state: restarted
+    name: elasticsearch
+  when:
+    - ansible_distribution == "CentOS"
+    - ansible_distribution_major_version == '7'
+
+- name: Set elasticsearch startup on boot
+  service:
+    enabled: yes
+    name: elasticsearch
+  when:
+    - ansible_distribution == "CentOS"
+    - ansible_distribution_major_version == '6'
+
+- name: Set elasticsearch startup on boot
+  service:
+    state: restarted
+    name: elasticsearch
+  when:
+    - ansible_distribution == "CentOS"
+    - ansible_distribution_major_version == '6'

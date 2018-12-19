@@ -1,0 +1,15 @@
+---
+- name: add {{ elk_repo_name }}
+  yum_repository:
+    name: "{{ elk_repo_name }}"
+    file: "{{ elk_repo_name }}"
+    description: "{{ elk_repo_description }}"
+    baseurl: "{{ elk_repo_baseurl }}"
+    gpgkey: "{{ elk_repo_gpgkey }}"
+    gpgcheck: yes
+    enabled: yes
+
+- name: Import elk rpm gpg-key.
+  rpm_key:
+    state: present
+    key: https://artifacts.elastic.co/GPG-KEY-elasticsearch

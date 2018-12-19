@@ -1,0 +1,15 @@
+---
+- name: Checks go logs path.
+  shell: ls {{ item }}
+  register: go_logs
+  with_items: "/apps/engine"
+  ignore_errors: yes
+
+- name: Write result of log_check to localfile.
+  copy:
+    content: "{{ go_logs.results }}"
+    dest: "/Users/ark/Documents/Kingbay/elk/result/go_{{ ansible_default_ipv4.address }}.json"
+  when:
+    - go_logs is defined
+  become: false
+  delegate_to: 127.0.0.1

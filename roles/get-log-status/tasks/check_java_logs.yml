@@ -1,0 +1,15 @@
+---
+- name: Checks java logs path.
+  shell: ls {{ item }}
+  register: java_logs
+  with_items: "/apps/tomcat-custom-instance"
+  ignore_errors: yes
+
+- name: Write result of log_check to localfile.
+  copy:
+    content: "{{ java_logs.results }}"
+    dest: "/Users/ark/Documents/Kingbay/elk/result/java_{{ ansible_default_ipv4.address }}.json"
+  when:
+    - java_logs is defined
+  become: false
+  delegate_to: 127.0.0.1

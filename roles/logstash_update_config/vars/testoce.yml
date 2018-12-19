@@ -1,0 +1,9 @@
+---
+elk:
+  e:
+    address: 192.168.100.214
+    port: 9200
+    master: 192.168.100.214
+  mapping:
+    shard_number: 1
+    replica_number: 1

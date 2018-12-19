@@ -1,0 +1,65 @@
+#=========================== Filebeat inputs =============================
+- type: log
+{% if item.item.key == "uaa" %}
+  enables: true
+  paths:
+    - {{ item.item.value }}/uaa-*.log
+{% elif item.item.key == "ares-analysis" %}
+  enables: true
+  paths:
+    - {{ item.item.value }}/analysis-*.log
+{% elif item.item.key == "ares-config" %}
+  enables: true
+  paths:
+    - {{ item.item.value }}/ares-config-*.log
+{% elif item.item.key == "ares-payment" %}
+  enables: true
+  paths:
+    - {{ item.item.value }}/payment-*.log
+{% elif item.item.key == "ares-statistics" %}
+  enables: true
+  paths:
+    - {{ item.item.value }}/statistics-*.log
+{% elif item.item.key == "forseti" %}
+  enables: true
+  paths:
+    - {{ item.item.value }}/forseti-*.log
+{% elif item.item.key == "hermes" %}
+  enables: true
+  paths:
+    - {{ item.item.value }}/hermes-*.log
+{% elif item.item.key == "venus" %}
+  enables: true
+  paths:
+    - {{ item.item.value }}/venus-*.log
+{% else %}
+  enables: false
+  paths:
+    - {{ item.item.value }}/{{ item.item.key }}-*.log
+{% endif %}
+  fields:
+    category: {{ item.item.key }}
+    type: java-{{ item.item.key }}
+  fields_under_root: true
+  multiline.pattern: ^\d+\-\d+\-\d+\s\S+,\S+
+  multiline.negate: true
+  multiline.match: after
+
+
+{% if item.item.key == "uaa" or
+      item.item.key == "forseti" or
+      item.item.key == "hermes" or
+      item.item.key == "ares-payment" :
+%}
+- type: log
+  enables: true
+  paths:
+    - {{ item.item.value }}/error.*.log
+  fields:
+    category: error
+    type: java-{{ item.item.key }}
+  fields_under_root: true
+  multiline.pattern: ^----
+  multiline.negate: true
+  multiline.match: after
+{% endif %}

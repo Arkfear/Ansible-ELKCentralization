@@ -1,0 +1,23 @@
+---
+- name: check path exists
+  stat:
+    path: "{{ item.value }}"
+  with_dict: "{{ service_all_log_path }}"
+  register: pathvar_service
+
+- name: set init list
+  set_fact:
+    service_log_path_list: []
+
+- name: Gerneric Service Log list
+  set_fact:
+    service_log_path_list: "{{ service_log_path_list + [ item.item ] }}"
+  when:
+    - item.stat.exists
+  with_items: "{{ pathvar_service.results }}"
+
+- name: Checks service logs path.
+  shell: ls {{ item.value }}
+  register: service_logs
+  with_items: "{{ service_log_path_list }}"
+  ignore_errors: yes

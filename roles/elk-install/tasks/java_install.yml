@@ -1,0 +1,14 @@
+---
+- name: Installing Java
+  yum:
+    name: " {{ item }} "
+    state: present
+  with_items:
+    - java
+
+- name: Check java version.
+  command: java -version 2>&1 | grep version | awk '{print $3}' | sed 's/"//g'
+  register: java_version
+
+- set_fact:
+    java_version: "{{ java_version }}"

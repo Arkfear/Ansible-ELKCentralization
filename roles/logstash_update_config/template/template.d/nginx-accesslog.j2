@@ -1,0 +1,54 @@
+{
+  "index_patterns": ["nginx-accesslog-*"],
+  "settings": {
+    {% if elk.mapping %}
+    "number_of_shards": {{elk.mapping.shard_number}},
+    "number_of_replicas": {{elk.mapping.replica_number}}
+    {% else %}
+    "number_of_shards": 1,
+    "number_of_replicas": 1
+    {% endif %}
+  },
+  "mappings": {
+    "doc": {
+      "properties": {
+        "host": { "type": "ip" },
+        "program": { "type": "keyword" },
+        "type": { "type": "keyword" },
+        "remote_ip": { "type": "ip" },
+        "cdn_ip": { "type": "ip" },
+        "cdn_region": { "type": "keyword" },
+        "proxy_path": { "type": "ip" },
+        "proxy_hopcount": { "type": "integer" },
+        "remote_user": { "type": "keyword" },
+        "method": { "type": "keyword" },
+        "request": { "type": "text", "fields": { "keyword": { "type":"keyword" } } },
+        "uri": { "type": "text", "fields": { "keyword": { "type":"keyword" } } },
+        "uri_project": { "type": "keyword" },
+        "status": { "type": "integer" },
+        "body_bytes_sent": { "type": "long" },
+        "http_referer": { "type": "text", "fields": { "keyword": { "type":"keyword" } } },
+        "http_user_agent": { "type": "text", "fields": { "keyword": { "type":"keyword" } } },
+        "http_host": { "type": "keyword" },
+        "message": { "type": "text" },
+        "request_time": { "type": "float" },
+        "upstream": { "type": "keyword" },
+        "upstream_ip": { "type": "ip" },
+        "upstream_port": { "type": "integer" },
+        "upstream_connect_time": { "type": "float" },
+        "upstream_header_time": { "type": "float" },
+        "upstream_response_time": { "type": "float" },
+        "upstream_status": { "type": "integer" },
+        "geoip": {
+          "dynamic": true,
+                "properties": {
+                  "ip": { "type": "ip" },
+                  "location": { "type": "geo_point" },
+                  "latitude": { "type": "half_float" },
+                  "longitude": { "type": "half_float" }
+          }
+        }
+      }
+    }
+  }
+}

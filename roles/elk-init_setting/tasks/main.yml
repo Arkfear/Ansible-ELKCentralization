@@ -1,0 +1,38 @@
+---
+- name: set variables
+  set_fact:
+    roles_name: "{{ role_path | basename }}"
+    env: '{{ group_names[0] | regex_replace("^(\S+)-\S+", "\1") }}'
+
+- debug:
+    msg: "Now Setting ENV: {{ env }}"
+
+- name: check vars file exist
+  local_action: stat path="{{ role_path }}/vars/{{ env }}.yml"
+  register: vars_file
+  become: false
+
+- include_vars: "{{ role_path }}/vars/{{ env }}.yml"
+  when: vars_file.stat.exists == True
+
+# - include_tasks: "setting_elasticsearch.yml"
+#   when:
+#     - '"e" in elk_role'
+
+# - include_tasks: "setting_logstash.yml"
+#   when:
+#     - '"l" in elk_role'
+
+- include_tasks: "setting_kibana.yml"
+  when:
+    - '"k" in elk_role'
+
+- name: Stop firewalld
+  systemd:
+    name: firewalld
+    enabled: no
+    state: stopped
+  ignore_errors: yes
+  when:
+  - ansible_distribution == "CentOS"
+  - ansible_distribution_major_version == '7'

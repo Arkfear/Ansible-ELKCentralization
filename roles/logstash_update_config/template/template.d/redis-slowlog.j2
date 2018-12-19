@@ -1,0 +1,26 @@
+{
+  "index_patterns": ["redis-slowlog-*"],
+  "settings": {
+    {% if elk.mapping %}
+    "number_of_shards": {{elk.mapping.shard_number}},
+    "number_of_replicas": {{elk.mapping.replica_number}}
+    {% else %}
+    "number_of_shards": 1,
+    "number_of_replicas": 1
+    {% endif %}
+  },
+  "mappings": {
+    "doc": {
+      "properties": {
+        "duration": { "type": "integer" },
+        "slow_id": { "type": "integer" },
+        "port": { "type": "integer" },
+        "host": { "type": "ip" },
+        "args": { "type": "text" },
+        "cmd": { "type":"text", "fields": { "keyword": { "type":"keyword" } } },
+        "key": { "type":"text", "fields": { "keyword": { "type":"keyword" } } },
+        "@log_timestamp": { "type": "date"}
+      }
+    }
+  }
+}

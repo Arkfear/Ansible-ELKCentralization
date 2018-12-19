@@ -1,0 +1,33 @@
+---
+- name: set variables
+  set_fact:
+    roles_name: "{{ role_path | basename }}"
+    env: '{{ group_names[0] | regex_replace("^(\S+)-\S+", "\1") }}'
+
+- name: check vars file exist
+  local_action: stat path="{{ role_path }}/vars/{{ env }}.yml"
+  register: vars_file
+  become: false
+
+- include_vars: "{{ role_path }}/vars/{{ env }}.yml"
+  when: vars_file.stat.exists == True
+
+# - name: Check
+#   shell: ps -ef | grep filebeat | grep work | awk {'print $2'} | xargs
+#   register: abc
+
+# - debug:
+#     msg: "{{ abc.stdout }}"
+
+# - name: kill
+#   shell: kill -9 {{ abc.stdout }}
+#   when: abc is defined
+# Centos6: Service Setting
+- name: Centos 6 stoping filebeat
+  service:
+    name: filebeat
+    state: restarted
+    enabled: yes
+  when:
+    - ansible_distribution == "CentOS"
+    - ansible_distribution_major_version == '6'

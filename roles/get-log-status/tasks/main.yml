@@ -1,0 +1,28 @@
+---
+- name: Checking go services exist.
+  stat:
+    path: /apps/engine
+  register: go_check
+  when:
+    - '"f" in elk_role'
+
+- name: Checking java services exist.
+  stat:
+    path: /apps/tomcat-custom-instance
+  register: java_check
+  when:
+    - '"f" in elk_role'
+
+- include_tasks: "check_java_logs.yml"
+  when:
+    - '"f" in elk_role'
+    - java_check.stat.exists
+
+- include_tasks: "check_go_logs.yml"
+  when:
+    - '"f" in elk_role'
+    - go_check.stat.exists
+
+# - include_tasks: "check_service_logs.yml"
+#   when:
+#     - '"f" in elk_role'

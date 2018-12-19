@@ -1,0 +1,15 @@
+---
+elk:
+  e:
+    cluster_name: "test-oce"
+    node_name: "{{ ansible_hostname }}"
+    listen_interface: "{{ ansible_default_ipv4.address }}"
+    port: 9200
+    memory: 8
+
+  l:
+    memory: 2
+  k:
+    port: 5601
+    listen_interface: "{{ ansible_default_ipv4.address }}"
+    name: "test-oce"

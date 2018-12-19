@@ -1,0 +1,11 @@
+---
+- name: Installing Logstash
+  yum:
+    name: " {{ item }} "
+    state: present
+  with_items:
+    - logstash
+
+- name: Installing requirement logstash plugins.
+  shell: /usr/share/logstash/bin/logstash-plugin install {{ item }}
+  with_items: "{{ logstash_pluginlist }}"

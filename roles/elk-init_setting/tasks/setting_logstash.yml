@@ -1,0 +1,53 @@
+---
+- name: Setting Logstash JVM Setting.
+  lineinfile:
+    path: /etc/logstash/jvm.options
+    regexp: '^-Xms.*'
+    line: '-Xms{{ elk.l.memory }}g'
+
+- name: Setting Logstash JVM Setting.
+  lineinfile:
+    path: /etc/logstash/jvm.options
+    regexp: '^-Xmx.*'
+    line: '-Xmx{{ elk.l.memory }}g'
+
+- name: Setting logstash and backup origin config file.
+  template:
+    src: ../template/logstash.yml.j2
+    dest: /etc/logstash/logstash.yml
+    owner: root
+    group: root
+    mode: '0644'
+    backup: yes
+
+- name: Set logstash startup on boot
+  systemd:
+    enabled: yes
+    name: logstash
+  when:
+    - ansible_distribution == "CentOS"
+    - ansible_distribution_major_version == '7'
+
+- name: Set logstash startup on boot
+  systemd:
+    state: restarted
+    name: logstash
+  when:
+    - ansible_distribution == "CentOS"
+    - ansible_distribution_major_version == '7'
+
+- name: Set logstash startup on boot
+  service:
+    enabled: yes
+    name: logstash
+  when:
+    - ansible_distribution == "CentOS"
+    - ansible_distribution_major_version == '6'
+
+- name: Set logstash startup on boot
+  service:
+    state: restarted
+    name: logstash
+  when:
+    - ansible_distribution == "CentOS"
+    - ansible_distribution_major_version == '6'

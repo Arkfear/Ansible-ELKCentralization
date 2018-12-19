@@ -1,0 +1,8 @@
+#=========================== Filebeat inputs =============================
+- type: log
+  enabled: true
+  paths:
+    - {{ item.item.value }}
+  fields:
+    type: {{ item.item.key }}
+  fields_under_root: true

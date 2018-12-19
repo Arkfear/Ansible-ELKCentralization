@@ -1,0 +1,41 @@
+---
+- name: Setting kibana and backup origin config file.
+  template:
+    src: ../template/kibana.yml.j2
+    dest: /etc/kibana/kibana.yml
+    owner: root
+    group: root
+    mode: '0644'
+    backup: yes
+
+- name: Set kibana startup on boot
+  systemd:
+    enabled: yes
+    name: kibana
+  when:
+    - ansible_distribution == "CentOS"
+    - ansible_distribution_major_version == '7'
+
+- name: Set kibana startup on boot
+  systemd:
+    state: restarted
+    name: kibana
+  when:
+    - ansible_distribution == "CentOS"
+    - ansible_distribution_major_version == '7'
+
+- name: Set kibana startup on boot
+  service:
+    enabled: yes
+    name: kibana
+  when:
+    - ansible_distribution == "CentOS"
+    - ansible_distribution_major_version == '6'
+
+- name: Set kibana startup on boot
+  service:
+    state: restarted
+    name: kibana
+  when:
+    - ansible_distribution == "CentOS"
+    - ansible_distribution_major_version == '6'

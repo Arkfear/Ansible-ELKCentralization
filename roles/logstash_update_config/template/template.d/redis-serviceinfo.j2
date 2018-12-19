@@ -1,0 +1,82 @@
+{
+  "index_patterns": ["redis-serviceinfo-*"],
+  "settings": {
+    {% if elk.mapping %}
+    "number_of_shards": {{elk.mapping.shard_number}},
+    "number_of_replicas": {{elk.mapping.replica_number}}
+    {% else %}
+    "number_of_shards": 1,
+    "number_of_replicas": 1
+    {% endif %}
+  },
+  "mappings": {
+    "doc": {
+      "properties": {
+        "host": { "type": "ip" },
+        "port": { "type": "integer" },
+        "command": { "type": "text" },
+        "type": { "type": "text", "fields": { "keyword": { "type":"keyword" } } },
+        "role": { "type": "keyword" },
+        "connected_slaves": { "type": "long" },
+        "repl_backlog_active": { "type": "long" },
+        "repl_backlog_size": { "type": "long" },
+        "repl_backlog_first_byte_offset": { "type": "long" },
+        "repl_backlog_histlen": { "type": "long" },
+        "connected_clients": { "type": "long" },
+        "client_longest_output_list": { "type": "long" },
+        "client_biggest_input_buf": { "type": "long" },
+        "blocked_clients": { "type": "long" },
+        "used_cpu_sys": { "type": "float" },
+        "used_cpu_user": { "type": "float" },
+        "used_cpu_sys_children": { "type": "float" },
+        "used_cpu_user_children": { "type": "float" },
+        "used_memory": { "type": "long" },
+        "used_memory_human": { "type": "text" },
+        "used_memory_rss": { "type": "long" },
+        "used_memory_peak": { "type": "long" },
+        "used_memory_rss_human": { "type": "text" },
+        "used_memory_peak_human": { "type": "text" },
+        "used_memory_peak_perc": { "type": "float" },
+        "used_memory_dataset_perc": { "type": "float" },
+        "used_memory_overhead": { "type": "long" },
+        "used_memory_startup": { "type": "long" },
+        "used_memory_dataset": { "type": "long" },
+        "total_system_memory": { "type": "long" },
+        "total_system_memory_human": { "type": "text" },
+        "used_memory_lua": { "type": "long" },
+        "used_memory_lua_human": { "type": "text" },
+        "maxmemory": { "type": "long" },
+        "maxmemory_human": { "type": "text" },
+        "maxmemory_policy": { "type": "keyword" },
+        "mem_fragmentation_ratio": { "type": "float" },
+        "mem_allocator": { "type": "text" },
+        "active_defrag_running": { "type": "long" },
+        "lazyfree_pending_objects": { "type": "long" },
+        "total_connections_received": { "type": "long" },
+        "total_commands_processed": { "type": "long" },
+        "instantaneous_ops_per_sec": { "type": "long" },
+        "total_net_input_bytes": { "type": "long" },
+        "total_net_output_bytes": { "type": "long" },
+        "instantaneous_input_kbps": { "type": "float" },
+        "instantaneous_output_kbps": { "type": "float" },
+        "rejected_connections": { "type": "long" },
+        "sync_full": { "type": "long" },
+        "sync_partial_ok": { "type": "long" },
+        "sync_partial_err": { "type": "long" },
+        "expired_keys": { "type": "long" },
+        "evicted_keys": { "type": "long" },
+        "keyspace_hits": { "type": "long" },
+        "keyspace_misses": { "type": "long" },
+        "pubsub_channels": { "type": "long" },
+        "pubsub_patterns": { "type": "long" },
+        "latest_fork_usec": { "type": "long" },
+        "migrate_cached_sockets": { "type": "long" },
+        "slave_expires_tracked_keys": { "type": "long" },
+        "active_defrag_hits": { "type": "long" },
+        "active_defrag_misses": { "type": "long" },
+        "active_defrag_key_hits": { "type": "long" },
+        "active_defrag_key_misses": { "type": "long" }
+      }
+    }
+  }
+}

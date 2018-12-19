@@ -1,0 +1,7 @@
+---
+- name: Installing Kibana
+  yum:
+    name: " {{ item }} "
+    state: present
+  with_items:
+    - kibana

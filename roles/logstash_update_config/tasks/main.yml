@@ -1,0 +1,17 @@
+---
+- name: set variables
+  set_fact:
+    roles_name: "{{ role_path | basename }}"
+    env: '{{ group_names[0] | regex_replace("^(\S+)-\S+", "\1") }}'
+
+- name: check vars file exist
+  local_action: stat path="{{ role_path }}/vars/{{ env }}.yml"
+  register: vars_file
+  become: false
+
+- include_vars: "{{ role_path }}/vars/{{ env }}.yml"
+  when: vars_file.stat.exists == True
+
+- include_tasks: "install-logstash-config.yml"
+  when:
+    - '"l" in elk_role'

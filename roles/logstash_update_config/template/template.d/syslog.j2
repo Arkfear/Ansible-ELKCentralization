@@ -1,0 +1,31 @@
+{
+  "index_patterns": ["syslog-*"],
+  "settings": {
+    {% if elk.mapping %}
+    "number_of_shards": {{elk.mapping.shard_number}},
+    "number_of_replicas": {{elk.mapping.replica_number}}
+    {% else %}
+    "number_of_shards": 1,
+    "number_of_replicas": 1
+    {% endif %}
+  },
+  "mappings": {
+    "doc": {
+      "properties": {
+        "type": { "type": "keyword" },
+        "log_file": { "type": "keyword" },
+        "action": { "type": "keyword" },
+        "host": { "type": "ip" },
+        "message": { "type":"text", "fields": { "keyword": { "type":"keyword" } } },
+        "@timestamp": { "type": "date"},
+
+        "priority": { "type": "integer"},
+        "facility": { "type": "integer"},
+        "severity": { "type": "integer"},
+        "facility_label": { "type": "keyword"},
+        "severity_label": { "type": "keyword"}
+
+      }
+    }
+  }
+}

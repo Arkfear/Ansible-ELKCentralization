@@ -1,0 +1,30 @@
+{
+  "index_patterns": ["java-*"],
+  "settings": {
+    {% if elk.mapping %}
+    "number_of_shards": {{elk.mapping.shard_number}},
+    "number_of_replicas": {{elk.mapping.replica_number}}
+    {% else %}
+    "number_of_shards": 1,
+    "number_of_replicas": 1
+    {% endif %}
+  },
+  "mappings": {
+    "doc": {
+      "properties": {
+        "type": { "type": "keyword" },
+        "log_file": { "type": "keyword" },
+        "host": { "type": "ip" },
+        "message": { "type":"text", "fields": { "keyword": { "type":"keyword" } } },
+        "@timestamp": { "type": "date"},
+        "content": { "type":"text", "fields": { "keyword": { "type":"keyword" } } },
+        "severity": { "type": "keyword" },
+        "programinfo": { "type": "keyword" },
+        "module": { "type": "keyword" },
+        "app_id": { "type": "keyword" },
+        "login_id": { "type": "keyword" },
+        "error_action": {"type": "keyword" }
+      }
+    }
+  }
+}

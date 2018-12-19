@@ -1,0 +1,13 @@
+---
+elk:
+  e:
+    cluster_name: "Jim-test"
+    node_name: "{{ ansible_hostname }}"
+    listen_interface: "127.0.0.1"
+    port: 9200
+    memory: 2
+
+  k:
+    port: 5601
+    listen_interface: "{{ ansible_default_ipv4.address }}"
+    name: "Jim-test"

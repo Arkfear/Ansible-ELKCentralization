@@ -1,0 +1,67 @@
+---
+- name: set variables
+  set_fact:
+    roles_name: "{{ role_path | basename }}"
+    env: '{{ group_names[0] | regex_replace("^(\S+)-\S+", "\1") }}'
+
+- name: check default file exist
+  local_action: stat path="{{ role_path }}/defaults/{{ env }}.yml"
+  register: default_file
+  become: false
+
+- name: check vars file exist
+  local_action: stat path="{{ role_path }}/vars/{{ env }}.yml"
+  register: vars_file
+  become: false
+
+- include_vars: "{{ role_path }}/defaults/{{ env }}.yml"
+  when: default_file.stat.exists == True
+
+- include_vars: "{{ role_path }}/vars/{{ env }}.yml"
+  when: vars_file.stat.exists == True
+
+- name: Check if conf.d in filebeat config path
+  stat:
+    path: /etc/filebeat/conf.d
+  register: confdstatus
+
+- name: Create conf.d in filebeat config path
+  file:
+    path: /etc/filebeat/conf.d
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+  when: confdstatus.stat.exists == False
+
+- name: Checking go services exist.
+  stat:
+    path: /apps/engine
+  register: go_check
+  when:
+    - '"f" in elk_role'
+
+- name: Checking java services exist.
+  stat:
+    path: /apps/tomcat-custom-instance
+  register: java_check
+  when:
+    - '"f" in elk_role'
+
+- include_tasks: "check_java_logs.yml"
+  when:
+    - '"f" in elk_role'
+    - java_check.stat.exists
+
+- include_tasks: "check_go_logs.yml"
+  when:
+    - '"f" in elk_role'
+    - go_check.stat.exists
+
+- include_tasks: "check_service_logs.yml"
+  when:
+    - '"f" in elk_role'
+
+- include_tasks: "f-setting.yml"
+  when:
+    - '"f" in elk_role'

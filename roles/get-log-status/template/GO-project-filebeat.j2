@@ -1,0 +1,12 @@
+#=========================== Filebeat inputs =============================
+- type: log
+  enabled: true
+  paths:
+    - {{ item.item.value }}/{{ item.item.key }}.log.info
+    - {{ item.item.value }}/{{ item.item.key }}.log.wf
+  fields:
+    type: go-{{ item.item.key }}
+  fields_under_root: true
+  multiline.pattern: ^\d+\/\d+\/\d+
+  multiline.negate: true
+  multiline.match: after

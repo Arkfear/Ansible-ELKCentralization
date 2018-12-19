@@ -1,0 +1,95 @@
+---
+- name: Delete all pipeline config
+  file:
+    path: /etc/logstash/conf.d/
+    state: absent
+
+- name: Delete all template config
+  file:
+    path: /etc/logstash/template.d/
+    state: absent
+
+- name: Delete all command config
+  file:
+    path: /etc/logstash/command.d/
+    state: absent
+
+- name: Delete all dictionary config
+  file:
+    path: /etc/logstash/dicts/
+    state: absent
+
+- name: Create template.d in logstash config path
+  file:
+    path: /etc/logstash/template.d
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+
+- template:
+    src: "{{ item }}"
+    dest: /etc/logstash/template.d/{{ (item | basename | splitext)[0] }}.template
+    owner: root
+    group: root
+    mode: '0755'
+  with_fileglob:
+    - ../template/template.d/*.j2
+
+- name: Get template list.
+  find:
+    paths: /etc/logstash/template.d
+  register: template_list
+
+- name: Install mapping templates.
+  shell: 'curl  -X "PUT" "{{ elk.e.master }}:9200/_template/{{ (item.path | basename | splitext)[0] | lower }}" \
+                -H "Content-Type: application/json" \
+                -d @{{ item.path }}'
+  with_items: "{{ template_list.files }}"
+  register: curl_response
+
+- name: Show curl response
+  debug:
+    msg: "{{ item.stdout_lines }}"
+  with_items: "{{ curl_response.results }}"
+
+- name: Copy command config
+  copy:
+    src: ../files/command.d
+    dest: /etc/logstash/
+    owner: root
+    group: root
+    mode: 0755
+
+- name: Copy dictionary config
+  copy:
+    src: ../files/dicts
+    dest: /etc/logstash/
+    owner: root
+    group: root
+    mode: 0755
+
+- name: Copy pipeline config
+  copy:
+    src: ../files/conf.d
+    dest: /etc/logstash/
+    owner: root
+    group: root
+    mode: 0755
+
+- template:
+    src: "{{ item }}"
+    dest: /etc/logstash/conf.d/{{ (item | basename | splitext)[0] }}.logstash.conf
+    owner: root
+    group: root
+    mode: '0755'
+  with_fileglob:
+    - ../template/conf.d/*.j2
+
+# - name: Set logstash startup on boot
+#   service:
+#     state: restarted
+#     name: logstash
+#   when:
+#     - ansible_distribution == "CentOS"
+#     - ansible_distribution_major_version == '6'

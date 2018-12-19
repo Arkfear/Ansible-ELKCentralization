@@ -1,0 +1,17 @@
+---
+- name: Get template list.
+  find:
+    paths: /etc/logstash/template.d
+  register: template_list
+
+- name: Install mapping templates.
+  shell: 'curl  -X "PUT" "{{ elk.e.address }}:9200/_template/{{ (item.path | basename | splitext)[0] | lower }}" \
+                -H "Content-Type: application/json" \
+                -d @{{ item.path }}'
+  with_items: "{{ template_list.files }}"
+  register: curl_response
+
+- name: Show curl response
+  debug:
+    msg: "{{ item.stdout_lines }}"
+  with_items: "{{ curl_response.results }}"

@@ -1,0 +1,32 @@
+---
+- name: check path exists
+  stat:
+    path: "{{ item.value }}"
+  with_dict: "{{ go_all_log_path }}"
+  register: pathvar_go
+
+- name: set init list
+  set_fact:
+    go_log_path_list: []
+
+- name: Gerneric Go Log list
+  set_fact:
+    go_log_path_list: "{{ go_log_path_list + [ item.item ] }}"
+  when:
+    - item.stat.exists
+  with_items: "{{ pathvar_go.results }}"
+
+- name: Checks go logs path.
+  shell: ls {{ item.value }}
+  register: go_logs
+  with_items: "{{ go_log_path_list }}"
+  ignore_errors: yes
+
+# - name: Write result of log_check to localfile.
+#   copy:
+#     content: "{{ go_logs.results }}"
+#     dest: "/Users/ark/Documents/Kingbay/elk-oce/result/go_{{ ansible_default_ipv4.address }}.json"
+#   when:
+#     - go_logs is defined
+#   become: false
+#   delegate_to: 127.0.0.1
